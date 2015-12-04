@@ -145,7 +145,9 @@ public class Hand {
 		// now there's only high card left
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 1) {
 			breakdown.add(nOfAKinds.get(0));
-			return new HandResult(HandType.HIGH_CARD, breakdown);
+			HandResult result = new HandResult(HandType.HIGH_CARD, breakdown);
+			result.fillBreakdownWithBestUnusedCardsFrom(cards);
+			return result;
 		}
 		
 		throw new InvalidHandEvaluationException();

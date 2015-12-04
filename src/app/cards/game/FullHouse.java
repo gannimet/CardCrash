@@ -33,6 +33,15 @@ public class FullHouse implements HandValue, Comparable<FullHouse> {
 		return pair;
 	}
 	
+	@Override
+	public Set<Card> getCards() {
+		Set<Card> cards = new HashSet<Card>();
+		cards.addAll(threeOfAKind.getCards());
+		cards.addAll(pair.getCards());
+		
+		return cards;
+	}
+	
 	/**
 	 * Returns the best possible full house out of the provided SORTED list
 	 * of n-of-a-kinds

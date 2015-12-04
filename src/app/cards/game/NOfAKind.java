@@ -38,6 +38,7 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 		return null;
 	}
 	
+	@Override
 	public Set<Card> getCards() {
 		return cards;
 	}

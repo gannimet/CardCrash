@@ -2,6 +2,7 @@ package app.cards.game;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,8 +49,9 @@ public class Flush implements HandValue, Comparable<Flush> {
 		return new Flush(flushCards);
 	}
 	
-	public List<Card> getCards() {
-		return cards;
+	@Override
+	public Set<Card> getCards() {
+		return new HashSet<Card>(cards);
 	}
 	
 	public Card getNthHighestCard(int n) {

@@ -75,8 +75,9 @@ public class Straight implements HandValue, Comparable<Straight> {
 		return isFlush;
 	}
 	
-	public List<Card> getCards() {
-		return cards;
+	@Override
+	public Set<Card> getCards() {
+		return new HashSet<Card>(cards);
 	}
 	
 	public Card getHighestCard() {
