@@ -1,8 +1,10 @@
 package app.cards.game;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +16,7 @@ import org.junit.Test;
 
 import app.cards.Card;
 import app.cards.Rank;
-import app.cards.RankComparator;
+import app.cards.RankBeforeSuitComparator;
 import app.cards.Suit;
 
 class EvaluationHelper {
@@ -22,8 +24,9 @@ class EvaluationHelper {
 	static CardSequence getLongestSequence(Set<Card> cards) {
 		Set<CardSequence> allSequences = new HashSet<>();
 		CardSequence currentSequence = new CardSequence();
+		allSequences.add(currentSequence);
 		List<Card> sortedCards = new ArrayList<>(cards);
-		Collections.sort(sortedCards, new RankComparator());
+		Collections.sort(sortedCards, new RankBeforeSuitComparator());
 		
 		// build up all sequences
 		for (Card card : sortedCards) {
@@ -34,8 +37,7 @@ class EvaluationHelper {
 				// current card is successor of last in sequence
 				currentSequence.appendCard(card);
 			} else if (!currentSequence.isEmpty() &&
-					card.getRank().getValue() ==
-					currentSequence.getRankOfLastElement().getValue()) {
+					card.getRank() == currentSequence.getRankOfLastElement()) {
 				// special case for multiple possible straights
 				// (important because one of them might be a straight flush)
 				currentSequence.addCardToLastElement(card);
@@ -66,6 +68,7 @@ class EvaluationHelper {
 				// start new
 				currentSequence = new CardSequence();
 				currentSequence.appendCard(card);
+				allSequences.add(currentSequence);
 			}
 		}
 		
@@ -138,6 +141,38 @@ class EvaluationHelper {
 		Collections.sort(nOfAKinds);
 		
 		return nOfAKinds;
+	}
+	
+	static boolean areAllCardsOfTheSameSuit(Collection<Card> cards) {
+		Suit referenceSuit = null;
+		
+		for (Card card : cards) {
+			if (referenceSuit == null) {
+				referenceSuit = card.getSuit();
+			}
+			
+			if (referenceSuit != card.getSuit()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	static boolean areAllCardsOfTheSameRank(Collection<Card> cards) {
+		Rank referenceRank = null;
+		
+		for (Card card : cards) {
+			if (referenceRank == null) {
+				referenceRank = card.getRank();
+			}
+			
+			if (referenceRank != card.getRank()) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public static void main(String[] args) {

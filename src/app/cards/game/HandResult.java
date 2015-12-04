@@ -4,24 +4,25 @@ import java.util.List;
 
 public final class HandResult {
 	
-	private List<HandValue> handTypeBreakdown;
+	private List<HandValue> breakdown;
 	private HandType handType;
 
-	HandResult(HandType handType, List<HandValue> handTypeBreakdown) {
+	HandResult(HandType handType, List<HandValue> breakdown) {
 		this.handType = handType;
-		this.handTypeBreakdown = handTypeBreakdown;
+		this.breakdown = breakdown;
 	}
 	
-	HandResult(HandType handType) {
-		this(handType, null);
-	}
-
 	public HandType getHandType() {
 		return handType;
 	}
 
-	public List<HandValue> getHandTypeBreakdown() {
-		return handTypeBreakdown;
+	public List<HandValue> getBreakdown() {
+		return breakdown;
+	}
+	
+	@Override
+	public String toString() {
+		return handType.getName() + ": " + breakdown;
 	}
 	
 }

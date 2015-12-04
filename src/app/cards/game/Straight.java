@@ -24,7 +24,7 @@ public class Straight implements HandValue, Comparable<Straight> {
 	
 	private Straight(List<Card> cards, boolean isFlush) {
 		if (cards.size() != 5) {
-			// TODO throw
+			throw new IllegalStraightException("Straight needs to be exactly 5 cards long.");
 		}
 		
 		this.cards = cards;
@@ -33,7 +33,7 @@ public class Straight implements HandValue, Comparable<Straight> {
 	
 	public static Straight makeBestStraight(CardSequence sequence) {
 		if (sequence.length() < 5) {
-			// TODO throw
+			throw new IllegalStraightException("Sequence needs to be exactly 5 cards long.");
 		}
 		
 		// find all possible combinations of all sets in the sequence
@@ -64,23 +64,11 @@ public class Straight implements HandValue, Comparable<Straight> {
 				newStraightCards.add(cardList.get(i));
 			}
 			
-			allStraights.add(new Straight(newStraightCards, areAllCardsOfSameSuit(newStraightCards)));
+			allStraights.add(new Straight(newStraightCards, EvaluationHelper.areAllCardsOfTheSameSuit(newStraightCards)));
 			startIndex++;
 		}
 		
 		return allStraights;
-	}
-	
-	private static boolean areAllCardsOfSameSuit(List<Card> straight) {
-		Suit referenceSuit = straight.get(0).getSuit();
-		
-		for (int i = 1; i < straight.size(); i++) {
-			if (straight.get(i).getSuit() != referenceSuit) {
-				return false;
-			}
-		}
-		
-		return true;
 	}
 	
 	public boolean isFlush() {
@@ -93,6 +81,10 @@ public class Straight implements HandValue, Comparable<Straight> {
 	
 	public Card getHighestCard() {
 		return cards.get(4);
+	}
+	
+	public boolean isRoyal() {
+		return isFlush() && getHighestCard().getRank() == Rank.ACE;
 	}
 
 	@Override
@@ -115,7 +107,7 @@ public class Straight implements HandValue, Comparable<Straight> {
 
 	@Override
 	public String toString() {
-		return "{ isFlush: " + isFlush() + ", cards: " + cards.toString() + " }";
+		return "{ isFlush: " + isFlush() + ", isRoyal: " + isRoyal() + ", cards: " + cards.toString() + " }";
 	}
 	
 	@Test
