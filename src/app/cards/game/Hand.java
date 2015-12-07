@@ -17,16 +17,37 @@ public class Hand {
 	private Set<Card> cards;
 	public final static int MAX_NUMBER_OF_CARDS_PER_HAND = 7;
 	
-	/*public Hand(Set<Card> cards) {
+	public Hand(Set<Card> cards) {
 		if (isValidCardSet(cards)) {
 			this.cards = cards;
 		} else {
 			throw new IllegalHandException();
 		}
-	}*/
+	}
 	
 	public Hand() {
 		cards = new HashSet<>(7);
+	}
+	
+	public static Hand fromShortcuts(String... shortcuts) {
+		Set<Card> cards = new HashSet<>();
+		
+		for (String shortcut : shortcuts) {
+			Card card = Card.fromShortcut(shortcut);
+			cards.add(card);
+		}
+		
+		return new Hand(cards);
+	}
+	
+	public static Hand fromCards(Card... cards) {
+		Set<Card> cardSet = new HashSet<>();
+		
+		for (Card card : cards) {
+			cardSet.add(card);
+		}
+		
+		return new Hand(cardSet);
 	}
 	
 	public Set<Card> getCards() {
@@ -82,7 +103,9 @@ public class Hand {
 		if (nOfAKinds.get(0).getN() == 4) {
 			// there it is
 			breakdown.add(nOfAKinds.get(0));
-			return new HandResult(HandType.FOUR_OF_A_KIND, breakdown);
+			HandResult result = new HandResult(HandType.FOUR_OF_A_KIND, breakdown);
+			result.fillBreakdownWithBestUnusedCardsFrom(cards);
+			return result;
 		}
 		
 		// next best hand would be full house
@@ -125,7 +148,9 @@ public class Hand {
 		// next best hand would be a three of a kind
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 3) {
 			breakdown.add(nOfAKinds.get(0));
-			return new HandResult(HandType.THREE_OF_A_KIND, breakdown);
+			HandResult result = new HandResult(HandType.THREE_OF_A_KIND, breakdown);
+			result.fillBreakdownWithBestUnusedCardsFrom(cards);
+			return result;
 		}
 		
 		// next best hand would be two pair
@@ -133,13 +158,17 @@ public class Hand {
 				nOfAKinds.get(1).getN() == 2) {
 			breakdown.add(nOfAKinds.get(0));
 			breakdown.add(nOfAKinds.get(1));
-			return new HandResult(HandType.TWO_PAIR, breakdown);
+			HandResult result = new HandResult(HandType.TWO_PAIR, breakdown);
+			result.fillBreakdownWithBestUnusedCardsFrom(cards);
+			return result;
 		}
 		
 		// next best hand would be one pair
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 2) {
 			breakdown.add(nOfAKinds.get(0));
-			return new HandResult(HandType.ONE_PAIR, breakdown);
+			HandResult result = new HandResult(HandType.ONE_PAIR, breakdown);
+			result.fillBreakdownWithBestUnusedCardsFrom(cards);
+			return result;
 		}
 		
 		// now there's only high card left

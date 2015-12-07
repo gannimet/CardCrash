@@ -99,15 +99,13 @@ class EvaluationHelper {
 	public static Map<Rank, Set<Card>> groupCardsByRank(Set<Card> cards) {
 		Map<Rank, Set<Card>> groupedRanks = new HashMap<>();
 		
+		for (Rank rank : Rank.values()) {
+			groupedRanks.put(rank, new HashSet<Card>());
+		}
+		
 		for (Card card : cards) {
 			Rank rank = card.getRank();
-			if (groupedRanks.containsKey(rank)) {
-				groupedRanks.get(rank).add(card);
-			} else {
-				Set<Card> rankCards = new HashSet<>();
-				rankCards.add(card);
-				groupedRanks.put(rank, rankCards);
-			}
+			groupedRanks.get(rank).add(card);
 		}
 		
 		return groupedRanks;
@@ -116,15 +114,13 @@ class EvaluationHelper {
 	public static Map<Suit, Set<Card>> groupCardsBySuit(Set<Card> cards) {
 		Map<Suit, Set<Card>> groupedSuits = new HashMap<>();
 		
+		for (Suit suit : Suit.values()) {
+			groupedSuits.put(suit, new HashSet<Card>());
+		}
+		
 		for (Card card : cards) {
 			Suit suit = card.getSuit();
-			if (groupedSuits.containsKey(suit)) {
-				groupedSuits.get(suit).add(card);
-			} else {
-				Set<Card> suitCards = new HashSet<>();
-				suitCards.add(card);
-				groupedSuits.put(suit, suitCards);
-			}
+			groupedSuits.get(suit).add(card);
 		}
 		
 		return groupedSuits;
@@ -135,7 +131,10 @@ class EvaluationHelper {
 		List<NOfAKind> nOfAKinds = new ArrayList<>();
 		
 		for (Rank rank : groupedRanks.keySet()) {
-			nOfAKinds.add(new NOfAKind(groupedRanks.get(rank)));
+			Set<Card> candidate = groupedRanks.get(rank);
+			if (candidate.size() > 0) {
+				nOfAKinds.add(new NOfAKind(candidate));
+			}
 		}
 		
 		Collections.sort(nOfAKinds);

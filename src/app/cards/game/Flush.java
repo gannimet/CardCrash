@@ -15,7 +15,6 @@ public class Flush implements HandValue, Comparable<Flush> {
 	private List<Card> cards;
 	
 	private Flush(List<Card> cards) {
-		System.out.println("new flush with cards: " + cards);
 		if (!EvaluationHelper.areAllCardsOfTheSameSuit(cards)) {
 			throw new IllegalFlushException("All cards need to be of same suit.");
 		}

@@ -56,7 +56,7 @@ public class Card {
 		return getCard(suit, rank);
 	}
 	
-	public void resetDeck() {
+	public static void resetDeck() {
 		randomlyDealt.clear();
 	}
 

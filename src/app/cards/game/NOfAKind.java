@@ -74,7 +74,10 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 
 	@Override
 	public int compareTo(NOfAKind other) {
-		int nDiff = other.getN() - this.getN();
+		int thisN = this.getN();
+		int otherN = other.getN();
+		
+		int nDiff = otherN - thisN;
 		
 		// the more cards the better
 		if (nDiff != 0) {

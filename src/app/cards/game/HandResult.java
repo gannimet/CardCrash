@@ -29,7 +29,7 @@ public final class HandResult {
 		return breakdown;
 	}
 	
-	public void fillBreakdownWithBestUnusedCardsFrom(Set<Card> cards) {
+	void fillBreakdownWithBestUnusedCardsFrom(Set<Card> cards) {
 		List<Card> sortedCards = new ArrayList<>();
 		sortedCards.addAll(cards);
 		
@@ -37,7 +37,7 @@ public final class HandResult {
 		// it's easier when highest cards are on top of the list
 		List<Card> reversedCards = Lists.reverse(sortedCards);
 		
-		for (int i = 0; breakdown.size() < 5; i++) {
+		for (int i = 0; getNumberOfCardsInBreakdown() < 5; i++) {
 			Card card = reversedCards.get(i);
 			
 			if (!isCardPartOfBreakdown(card)) {
@@ -58,6 +58,16 @@ public final class HandResult {
 		}
 		
 		return false;
+	}
+	
+	private int getNumberOfCardsInBreakdown() {
+		int count = 0;
+		
+		for (HandValue handValue : breakdown) {
+			count += handValue.getCards().size();
+		}
+		
+		return count;
 	}
 	
 	@Override
