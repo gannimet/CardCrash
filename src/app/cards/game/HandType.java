@@ -22,4 +22,9 @@ public enum HandType {
 		return value;
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 }

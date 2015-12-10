@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -15,18 +16,16 @@ import app.cards.Suit;
 public class Hand {
 
 	private Set<Card> cards;
-	public final static int MAX_NUMBER_OF_CARDS_PER_HAND = 7;
+	public final static int MAX_NUMBER_OF_CARDS_PER_HAND = 100;
+	private String id;
 	
 	public Hand(Set<Card> cards) {
 		if (isValidCardSet(cards)) {
 			this.cards = cards;
+			this.setId(UUID.randomUUID().toString());
 		} else {
 			throw new IllegalHandException();
 		}
-	}
-	
-	public Hand() {
-		cards = new HashSet<>(7);
 	}
 	
 	public static Hand fromShortcuts(String... shortcuts) {
@@ -50,6 +49,27 @@ public class Hand {
 		return new Hand(cardSet);
 	}
 	
+	public static Hand fromCards(Set<Card> baseCards, Card... holeCards) {
+		Set<Card> cardSet = new HashSet<>();
+		cardSet.addAll(baseCards);
+		
+		for (Card holeCard : holeCards) {
+			cardSet.add(holeCard);
+		}
+		
+		return new Hand(cardSet);
+	}
+	
+	public static Hand randomHand(int numberOfCards) {
+		Set<Card> cards = new HashSet<>();
+		
+		for (int i = 0; i < numberOfCards; i++) {
+			cards.add(Card.randomCard());
+		}
+		
+		return new Hand(cards);
+	}
+	
 	public Set<Card> getCards() {
 		return cards;
 	}
@@ -64,6 +84,14 @@ public class Hand {
 		} else {
 			throw new IllegalHandException();
 		}
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	private boolean isValidCardSet(Set<Card> cards) {
@@ -88,10 +116,10 @@ public class Hand {
 			
 			if (straight.isRoyal()) {
 				// best possible hand
-				return new HandResult(HandType.ROYAL_FLUSH, breakdown);
+				return new HandResult(HandType.ROYAL_FLUSH, breakdown, id);
 			} else if (straight.isFlush()) {
 				// second best possible hand
-				return new HandResult(HandType.STRAIGHT_FLUSH, breakdown);
+				return new HandResult(HandType.STRAIGHT_FLUSH, breakdown, id);
 			}
 			
 			// obviously the straight was neither royal nor a straight flush
@@ -103,7 +131,7 @@ public class Hand {
 		if (nOfAKinds.get(0).getN() == 4) {
 			// there it is
 			breakdown.add(nOfAKinds.get(0));
-			HandResult result = new HandResult(HandType.FOUR_OF_A_KIND, breakdown);
+			HandResult result = new HandResult(HandType.FOUR_OF_A_KIND, breakdown, id);
 			result.fillBreakdownWithBestUnusedCardsFrom(cards);
 			return result;
 		}
@@ -113,7 +141,7 @@ public class Hand {
 			// there it is
 			FullHouse fullHouse = FullHouse.makeBestFullHouse(nOfAKinds);
 			breakdown.add(fullHouse);
-			return new HandResult(HandType.FULL_HOUSE, breakdown);
+			return new HandResult(HandType.FULL_HOUSE, breakdown, id);
 		}
 		
 		// next best hand would be a flush
@@ -121,34 +149,34 @@ public class Hand {
 			// club flush is best
 			Flush flush = Flush.makeBestFlush(cardsGroupedBySuit.get(Suit.CLUBS));
 			breakdown.add(flush);
-			return new HandResult(HandType.FLUSH, breakdown);
+			return new HandResult(HandType.FLUSH, breakdown, id);
 		} else if (cardsGroupedBySuit.get(Suit.DIAMONDS).size() >= 5) {
 			// diamonds still pretty good
 			Flush flush = Flush.makeBestFlush(cardsGroupedBySuit.get(Suit.DIAMONDS));
 			breakdown.add(flush);
-			return new HandResult(HandType.FLUSH, breakdown);
+			return new HandResult(HandType.FLUSH, breakdown, id);
 		} else if (cardsGroupedBySuit.get(Suit.HEARTS).size() >= 5) {
 			// hearts still decent
 			Flush flush = Flush.makeBestFlush(cardsGroupedBySuit.get(Suit.HEARTS));
 			breakdown.add(flush);
-			return new HandResult(HandType.FLUSH, breakdown);
+			return new HandResult(HandType.FLUSH, breakdown, id);
 		} else if (cardsGroupedBySuit.get(Suit.SPADES).size() >= 5) {
 			// spades... well, at least it's still a flush
 			Flush flush = Flush.makeBestFlush(cardsGroupedBySuit.get(Suit.SPADES));
 			breakdown.add(flush);
-			return new HandResult(HandType.FLUSH, breakdown);
+			return new HandResult(HandType.FLUSH, breakdown, id);
 		}
 		
 		// if we found a straight earlier and it survived till now, it means it's
 		// the best we can do with this hand!
 		if (straight != null) {
-			return new HandResult(HandType.STRAIGHT, breakdown);
+			return new HandResult(HandType.STRAIGHT, breakdown, id);
 		}
 		
 		// next best hand would be a three of a kind
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 3) {
 			breakdown.add(nOfAKinds.get(0));
-			HandResult result = new HandResult(HandType.THREE_OF_A_KIND, breakdown);
+			HandResult result = new HandResult(HandType.THREE_OF_A_KIND, breakdown, id);
 			result.fillBreakdownWithBestUnusedCardsFrom(cards);
 			return result;
 		}
@@ -158,7 +186,7 @@ public class Hand {
 				nOfAKinds.get(1).getN() == 2) {
 			breakdown.add(nOfAKinds.get(0));
 			breakdown.add(nOfAKinds.get(1));
-			HandResult result = new HandResult(HandType.TWO_PAIR, breakdown);
+			HandResult result = new HandResult(HandType.TWO_PAIR, breakdown, id);
 			result.fillBreakdownWithBestUnusedCardsFrom(cards);
 			return result;
 		}
@@ -166,7 +194,7 @@ public class Hand {
 		// next best hand would be one pair
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 2) {
 			breakdown.add(nOfAKinds.get(0));
-			HandResult result = new HandResult(HandType.ONE_PAIR, breakdown);
+			HandResult result = new HandResult(HandType.ONE_PAIR, breakdown, id);
 			result.fillBreakdownWithBestUnusedCardsFrom(cards);
 			return result;
 		}
@@ -174,7 +202,7 @@ public class Hand {
 		// now there's only high card left
 		if (nOfAKinds.size() >= 1 && nOfAKinds.get(0).getN() == 1) {
 			breakdown.add(nOfAKinds.get(0));
-			HandResult result = new HandResult(HandType.HIGH_CARD, breakdown);
+			HandResult result = new HandResult(HandType.HIGH_CARD, breakdown, id);
 			result.fillBreakdownWithBestUnusedCardsFrom(cards);
 			return result;
 		}
@@ -184,14 +212,15 @@ public class Hand {
 	
 	@Test
 	public void testHandEvaluation() {
-		Hand hand = new Hand();
-		hand.addCard(Card.getCard(Suit.CLUBS, Rank.DEUCE));
-		hand.addCard(Card.getCard(Suit.SPADES, Rank.TEN));
-		hand.addCard(Card.getCard(Suit.DIAMONDS, Rank.EIGHT));
-		hand.addCard(Card.getCard(Suit.HEARTS, Rank.KING));
-		hand.addCard(Card.getCard(Suit.DIAMONDS, Rank.QUEEN));
-		hand.addCard(Card.getCard(Suit.DIAMONDS, Rank.FIVE));
-		hand.addCard(Card.getCard(Suit.DIAMONDS, Rank.JACK));
+		Hand hand = Hand.fromCards(
+			Card.getCard(Suit.CLUBS, Rank.DEUCE),
+			Card.getCard(Suit.SPADES, Rank.TEN),
+			Card.getCard(Suit.DIAMONDS, Rank.EIGHT),
+			Card.getCard(Suit.HEARTS, Rank.KING),
+			Card.getCard(Suit.DIAMONDS, Rank.QUEEN),
+			Card.getCard(Suit.DIAMONDS, Rank.FIVE),
+			Card.getCard(Suit.DIAMONDS, Rank.JACK)
+		);
 		
 		HandResult result = hand.evaluate();
 		

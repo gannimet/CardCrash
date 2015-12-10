@@ -1,55 +1,42 @@
 package app.cards;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import app.cards.game.Hand;
 import app.cards.game.HandResult;
-import app.cards.game.HandType;
+import app.cards.game.HandResultList;
 
 public class Main {
-
-	private static Hand generateHandWithNCards(int n) {
-		Card.resetDeck();
-		Set<Card> cards = new HashSet<>();
-		for (int i = 0; i < n; i++) {
-			Card card = Card.randomCard();
-			cards.add(card);
-		}
-		
-		return new Hand(cards);
-	}
-	
 	public static void main(String[] args) {
-		System.out.println("Calculating …");
+		Set<Card> board = new HashSet<>();
+		for (int i = 0; i < 5; i++) {
+			board.add(Card.randomCard());
+		}
 		
-		Map<HandType, Integer> results = new HashMap<>();
-		HandResult currentResult;
-		HandType currentHandType;
+		System.out.println("Board: " + board);
 		
-		for (int i = 0; i < 1e6; i++) {
-			currentResult = generateHandWithNCards(7).evaluate();
-			currentHandType = currentResult.getHandType();
-			if (results.containsKey(currentHandType)) {
-				results.put(currentHandType, results.get(currentHandType) + 1);
-			} else {
-				results.put(currentHandType, 1);
+		HandResultList resultList = new HandResultList();
+		for (int i = 1; i <= 9; i++) {
+			Card card1 = Card.randomCard();
+			Card card2 = Card.randomCard();
+			System.out.println("Player " + i + " hole cards: " + card1 + " and " + card2);
+			
+			Hand hand = Hand.fromCards(board, card1, card2);
+			hand.setId("Player " + i);
+			resultList.addHand(hand);
+		}
+		
+		System.out.println("---");
+		
+		for (int place = 1; place <= resultList.getNumberOfPlaces(); place++) {
+			Collection<HandResult> results = resultList.getResultsRankedAt(place);
+			System.out.println("Place " + place + " contains " + results.size() + " results and they are:");
+			for (HandResult result : results) {
+				System.out.println("  -- " + result.getId() + " with: " + result);
 			}
-		}
-		
-		int sum = 0;
-		for (HandType handType : results.keySet()) {
-			sum += results.get(handType);
-		}
-		
-		System.out.format("%-15s%20s%10s%n", "Hand type", "#", "%");
-		System.out.println("---------------------------------------------");
-		for (HandType handType : results.keySet()) {
-			int count = results.get(handType);
-			double share = (double) count / (double) sum * 100;
-			System.out.format("%-15s%20d%10.4f%n", handType.getName(), count, share);
+			System.out.println();
 		}
 	}
 	
