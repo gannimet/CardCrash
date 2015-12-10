@@ -1,6 +1,7 @@
 package app.cards.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +12,7 @@ import com.google.common.collect.Lists;
 import app.cards.Card;
 import app.cards.RankBeforeSuitComparator;
 
-public final class HandResult implements Comparable<HandResult> {
+public class HandResult implements Comparable<HandResult> {
 	
 	private List<HandValue> breakdown;
 	private HandType handType;
@@ -57,7 +58,7 @@ public final class HandResult implements Comparable<HandResult> {
 	
 	private boolean isCardPartOfBreakdown(Card card) {
 		for (HandValue handValue : breakdown) {
-			Set<Card> handValueCards = handValue.getCards();
+			Collection<Card> handValueCards = handValue.getCards();
 			if (handValueCards.contains(card)) {
 				return true;
 			}

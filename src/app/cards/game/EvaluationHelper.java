@@ -1,8 +1,5 @@
 package app.cards.game;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.junit.Test;
 
 import app.cards.Card;
 import app.cards.Rank;
@@ -172,112 +167,6 @@ class EvaluationHelper {
 		}
 		
 		return true;
-	}
-	
-	public static void main(String[] args) {
-		Set<Card> cards = new HashSet<>();
-		cards.add(Card.getCard(Suit.CLUBS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.CLUBS, Rank.TEN));
-		cards.add(Card.getCard(Suit.DIAMONDS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.TEN));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.TRAY));
-		cards.add(Card.getCard(Suit.SPADES, Rank.TEN));
-		
-		System.out.println(getNOfAKinds(cards));
-	}
-	
-	@Test
-	public void testStraightDetection() {
-		Set<Card> cards = new HashSet<>();
-		cards.add(Card.getCard(Suit.CLUBS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.FOUR));
-		cards.add(Card.getCard(Suit.CLUBS, Rank.TEN));
-		cards.add(Card.getCard(Suit.DIAMONDS, Rank.JACK));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.SIX));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.TRAY));
-		cards.add(Card.getCard(Suit.SPADES, Rank.SEVEN));
-		
-		CardSequence result = EvaluationHelper.getLongestSequence(cards);
-		
-		assertEquals("Longest sequence should be 5 elements long", 5, result.length());
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.TRAY), result.anyCardAt(0));
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.FOUR), result.anyCardAt(1));
-		assertEquals(Card.getCard(Suit.CLUBS, Rank.FIVE), result.anyCardAt(2));
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.SIX), result.anyCardAt(3));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.SEVEN), result.anyCardAt(4));
-	}
-	
-	@Test
-	public void testWheelDetection() {
-		Set<Card> cards = new HashSet<>();
-		cards.add(Card.getCard(Suit.CLUBS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.TRAY));
-		cards.add(Card.getCard(Suit.CLUBS, Rank.ACE));
-		cards.add(Card.getCard(Suit.DIAMONDS, Rank.KING));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.ACE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.FOUR));
-		cards.add(Card.getCard(Suit.SPADES, Rank.DEUCE));
-		
-		CardSequence result = EvaluationHelper.getLongestSequence(cards);
-		
-		assertEquals("Longest sequence should be 5 elements long", 5, result.length());
-		assertTrue(result.cardsAt(0).contains(Card.getCard(Suit.HEARTS, Rank.ACE)));
-		assertTrue(result.cardsAt(0).contains(Card.getCard(Suit.CLUBS, Rank.ACE)));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.DEUCE), result.anyCardAt(1));
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.TRAY), result.anyCardAt(2));
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.FOUR), result.anyCardAt(3));
-		assertEquals(Card.getCard(Suit.CLUBS, Rank.FIVE), result.anyCardAt(4));
-	}
-	
-	@Test
-	public void testConcurrentSequenceDetection() {
-		Set<Card> cards = new HashSet<>();
-		cards.add(Card.getCard(Suit.CLUBS, Rank.QUEEN));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.JACK));
-		cards.add(Card.getCard(Suit.CLUBS, Rank.EIGHT));
-		cards.add(Card.getCard(Suit.DIAMONDS, Rank.KING));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.SIX));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.DEUCE));
-		cards.add(Card.getCard(Suit.SPADES, Rank.SEVEN));
-		
-		CardSequence result = EvaluationHelper.getLongestSequence(cards);
-		
-		assertEquals("Longest sequence should be 3 elements long", 3, result.length());
-		for (Set<Card> cardSet : result) {
-			assertEquals(1, cardSet.size());
-		}
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.JACK), result.anyCardAt(0));
-		assertEquals(Card.getCard(Suit.CLUBS, Rank.QUEEN), result.anyCardAt(1));
-		assertEquals(Card.getCard(Suit.DIAMONDS, Rank.KING), result.anyCardAt(2));
-	}
-	
-	@Test
-	public void testMultipleCardStraightDetection() {
-		Set<Card> cards = new HashSet<>();
-		cards.add(Card.getCard(Suit.CLUBS, Rank.FIVE));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.EIGHT));
-		cards.add(Card.getCard(Suit.CLUBS, Rank.NINE));
-		cards.add(Card.getCard(Suit.DIAMONDS, Rank.SIX));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.SIX));
-		cards.add(Card.getCard(Suit.HEARTS, Rank.ACE));
-		cards.add(Card.getCard(Suit.SPADES, Rank.SEVEN));
-		
-		CardSequence result = EvaluationHelper.getLongestSequence(cards);
-		System.out.println(result);
-		
-		assertEquals("Longest sequence should be 5 elements long", 5, result.length());
-		assertEquals(1, result.cardsAt(0).size());
-		assertEquals(Card.getCard(Suit.CLUBS, Rank.FIVE), result.anyCardAt(0));
-		assertEquals(2, result.cardsAt(1).size());
-		assertTrue(result.cardsAt(1).contains(Card.getCard(Suit.DIAMONDS, Rank.SIX)));
-		assertTrue(result.cardsAt(1).contains(Card.getCard(Suit.HEARTS, Rank.SIX)));
-		assertEquals(1, result.cardsAt(0).size());
-		assertEquals(Card.getCard(Suit.SPADES, Rank.SEVEN), result.anyCardAt(2));
-		assertEquals(1, result.cardsAt(0).size());
-		assertEquals(Card.getCard(Suit.HEARTS, Rank.EIGHT), result.anyCardAt(3));
-		assertEquals(1, result.cardsAt(0).size());
-		assertEquals(Card.getCard(Suit.CLUBS, Rank.NINE), result.anyCardAt(4));
 	}
 	
 }

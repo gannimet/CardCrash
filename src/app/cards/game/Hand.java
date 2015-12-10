@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Test;
-
 import app.cards.Card;
-import app.cards.Rank;
 import app.cards.Suit;
 
 public class Hand {
@@ -208,23 +205,6 @@ public class Hand {
 		}
 		
 		throw new InvalidHandEvaluationException();
-	}
-	
-	@Test
-	public void testHandEvaluation() {
-		Hand hand = Hand.fromCards(
-			Card.getCard(Suit.CLUBS, Rank.DEUCE),
-			Card.getCard(Suit.SPADES, Rank.TEN),
-			Card.getCard(Suit.DIAMONDS, Rank.EIGHT),
-			Card.getCard(Suit.HEARTS, Rank.KING),
-			Card.getCard(Suit.DIAMONDS, Rank.QUEEN),
-			Card.getCard(Suit.DIAMONDS, Rank.FIVE),
-			Card.getCard(Suit.DIAMONDS, Rank.JACK)
-		);
-		
-		HandResult result = hand.evaluate();
-		
-		System.out.println(result);
 	}
 	
 }

@@ -1,6 +1,7 @@
 package app.cards.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +40,7 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 	}
 	
 	@Override
-	public Set<Card> getCards() {
+	public Collection<Card> getCards() {
 		return cards;
 	}
 	

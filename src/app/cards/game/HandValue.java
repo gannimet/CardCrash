@@ -1,11 +1,11 @@
 package app.cards.game;
 
-import java.util.Set;
+import java.util.Collection;
 
 import app.cards.Card;
 
 public interface HandValue {
 
-	public Set<Card> getCards();
+	public Collection<Card> getCards();
 	
 }

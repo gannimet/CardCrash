@@ -1,21 +1,16 @@
 package app.cards.game;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
 import com.google.common.collect.Sets;
 
 import app.cards.Card;
 import app.cards.Rank;
-import app.cards.Suit;
 
 public class Straight implements HandValue, Comparable<Straight> {
 
@@ -76,8 +71,8 @@ public class Straight implements HandValue, Comparable<Straight> {
 	}
 	
 	@Override
-	public Set<Card> getCards() {
-		return new HashSet<Card>(cards);
+	public Collection<Card> getCards() {
+		return cards;
 	}
 	
 	public Card getHighestCard() {
@@ -109,36 +104,6 @@ public class Straight implements HandValue, Comparable<Straight> {
 	@Override
 	public String toString() {
 		return "{ isFlush: " + isFlush() + ", isRoyal: " + isRoyal() + ", cards: " + cards.toString() + " }";
-	}
-	
-	@Test
-	public void testStraightDetection() {
-		Set<Card> set1 = new HashSet<>();
-		Set<Card> set2 = new HashSet<>();
-		Set<Card> set3 = new HashSet<>();
-		Set<Card> set4 = new HashSet<>();
-		Set<Card> set5 = new HashSet<>();
-		Set<Card> set6 = new HashSet<>();
-		
-		set1.add(Card.getCard(Suit.SPADES, Rank.FOUR)); set1.add(Card.getCard(Suit.DIAMONDS, Rank.FOUR)); set1.add(Card.getCard(Suit.CLUBS, Rank.FOUR));
-		set2.add(Card.getCard(Suit.SPADES, Rank.FIVE));
-		set3.add(Card.getCard(Suit.SPADES, Rank.SIX)); set3.add(Card.getCard(Suit.CLUBS, Rank.SIX));
-		set4.add(Card.getCard(Suit.SPADES, Rank.SEVEN)); set4.add(Card.getCard(Suit.HEARTS, Rank.SEVEN));
-		set5.add(Card.getCard(Suit.SPADES, Rank.EIGHT));
-		set6.add(Card.getCard(Suit.CLUBS, Rank.NINE));
-		
-		List<Set<Card>> list = new ArrayList<>();
-		list.add(set1); list.add(set2); list.add(set3); list.add(set4); list.add(set5); list.add(set6);
-		
-		Straight bestStraight = Straight.makeBestStraight(new CardSequence(list));
-		
-		assertEquals(5, bestStraight.cards.size());
-		assertEquals(Card.getCard(Suit.SPADES, Rank.FOUR), bestStraight.cards.get(0));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.FIVE), bestStraight.cards.get(1));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.SIX), bestStraight.cards.get(2));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.SEVEN), bestStraight.cards.get(3));
-		assertEquals(Card.getCard(Suit.SPADES, Rank.EIGHT), bestStraight.cards.get(4));
-		assertTrue(bestStraight.isFlush());
 	}
 	
 }
