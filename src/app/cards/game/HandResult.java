@@ -12,30 +12,72 @@ import com.google.common.collect.Lists;
 import app.cards.Card;
 import app.cards.RankBeforeSuitComparator;
 
+/**
+ * Encapsulates the result of the evaluation of a {@link Hand} initiated by calling
+ * {@link Hand#evaluate()}.
+ */
 public class HandResult implements Comparable<HandResult> {
 	
 	private List<HandValue> breakdown;
 	private HandType handType;
 	private String id;
 
+	/**
+	 * Creates a new {@code HandResult} with the supplied information
+	 * @param handType which {@link HandType} was identified for the {@link Card}s of a {@link Hand}
+	 * @param breakdown how the best 5-card combination breaks down into {@link HandValue}s,
+	 * from best to worst
+	 * @param id the identifier for this {@code HandResult} (see {@link Hand#setId(String)})
+	 */
 	HandResult(HandType handType, List<HandValue> breakdown, String id) {
 		this.handType = handType;
 		this.breakdown = breakdown;
 		this.id = id;
 	}
 	
+	/**
+	 * The {@link HandType} represented by this {@code HandResult}
+	 * @return The {@code HandType} represented by this {@code HandResult}
+	 */
 	public HandType getHandType() {
 		return handType;
 	}
 
+	/**
+	 * <p>A detailed breakdown of all {@link HandValue}s producing the {@link HandType} represented by this
+	 * {@code HandResult}</p>
+	 * <p>
+	 * The total number of {@link Card}s across all these {@code HandValue}s is guaranteed to equal 5.
+	 * In case the actual {@code HandType} consists of less than five cards (High card, One Pair, Two Pair, Three of
+	 * a kind, Four of a kind), the returned breakdown will be filled the best of the remaining {@code Card}s. The
+	 * order inside the returned {@code List} is guaranteed to be best to worst, e. g. a two-pair {@code Hand} will
+	 * break down as an {@link NOfAKind} with 2 {@code Card}s representing the better pair, another {@code NOfAKind}
+	 * with the worse pair, plus the "best of the rest" {@code Card} to make up the numbers.
+	 * </p>
+	 * @return The breakdown as a {@link List} of {@code HandValue}s comprising the determined {@code HandType}.
+	 */
 	public List<HandValue> getBreakdown() {
 		return breakdown;
 	}
 	
+	/**
+	 * <p>The ID of this {@code HandResult}</p>
+	 * <p>
+	 * The {@link Hand} object that has created this {@code HandResult} will pass its ID into it upon calling the
+	 * constructor. This enables for tracking down the {@code Hand} which produced this {@code HandResult}.
+	 * </p>
+	 * @return The ID of this {@code HandResult}
+	 */
 	public String getId() {
 		return id;
 	}
 
+	/**
+	 * Puts the best {@link Card}s from the supplied {@link Set} into the breakdown until it contains exactly 5
+	 * {@code Card}s
+	 * @param cards a {@code Set} from which to pick the best {@code Card}s (as determined by the
+	 * {@link RankBeforeSuitComparator}) until a total of 5 {@code Card}s is in the breakdown
+	 */
 	void fillBreakdownWithBestUnusedCardsFrom(Set<Card> cards) {
 		List<Card> sortedCards = new ArrayList<>();
 		sortedCards.addAll(cards);
@@ -77,11 +119,25 @@ public class HandResult implements Comparable<HandResult> {
 		return count;
 	}
 	
+	/**
+	 * Returns a human-readable explanation of this {@code HandResult}
+	 * @return A human-readble {@link String} containing the {@link HandType} and breakdown of this
+	 * {@code HandResult}
+	 */
 	@Override
 	public String toString() {
 		return handType.getName() + ", breaks down as: " + breakdown;
 	}
 
+	/**
+	 * <p>Compares this {@code HandResult} to another</p>
+	 * <p>
+	 * Whether one {@code HandResult} is better than another is determined by the usual poker hand ranking (see
+	 * also {@link HandType}, specifically {@link HandType#getValue()}).
+	 * </p>
+	 * @return A negative number if this {@code HandResult} is better than {@code other}, a positive number if
+	 * {@code other} is better than this {@code HandResult}, 0 if they're equal
+	 */
 	@Override
 	public int compareTo(HandResult other) {
 		HandType thisHandType = this.handType;

@@ -7,15 +7,43 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import app.cards.AllCardsDealtException;
 import app.cards.Card;
 import app.cards.Suit;
 
+/**
+ * <p>
+ * This class represents a poker hand (hole cards + community cards) and offers a method for
+ * evaluating the value of that hand ({@link #evaluate()}).
+ * </p>
+ * <p>
+ * A {@code Hand} can either be created via the constructor {@link #Hand(Set)} supplying
+ * a {@link Set} of {@link Card} objects or via one of several static creation methods
+ * ({@link #fromCards(Card...)}, {@link #fromCards(Set, Card...)}, {@link #fromCards(Set, Set)} or
+ * {@link #fromShortcuts(String...)}). Also, {@code Card}s can be added to the {@code Hand} later on
+ * via {@link #addCard(Card)} or {@link #setCards(Set)}.
+ * </p>
+ * <p>
+ * Every {@code Hand} object is automatically assigned a UUID upon creation that can be used to
+ * later track down the "source" {@code Hand} of a {@link HandResult} as returned by
+ * {@link #evaluate()}.
+ * </p>
+ */
 public class Hand {
 
 	private Set<Card> cards;
-	public final static int MAX_NUMBER_OF_CARDS_PER_HAND = 100;
 	private String id;
 	
+	/**
+	 * The maximum number of cards per hand (7 by default)
+	 */
+	public static int MAX_NUMBER_OF_CARDS_PER_HAND = 7;
+	
+	/**
+	 * Creates a new {@code Hand} from a {@link Set} of {@link Card}s
+	 * @param cards {@code Card}s to be used in the hand
+	 * @throws IllegalHandException if {@code cards.size() > MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
 	public Hand(Set<Card> cards) {
 		if (isValidCardSet(cards)) {
 			this.cards = cards;
@@ -25,6 +53,14 @@ public class Hand {
 		}
 	}
 	
+	/**
+	 * Creates a new {@code Hand} from the supplied shortcuts
+	 * @param shortcuts shortcuts for all {@link Card}s to be used in this hand
+	 * @return The newly created {@code Hand} object
+	 * @throws IllegalHandException if the number of supplied shortcuts is greater than
+	 * {@code MAX_NUMBER_OF_CARDS_PER_HAND}
+	 * @see Card#fromShortcut(String)
+	 */
 	public static Hand fromShortcuts(String... shortcuts) {
 		Set<Card> cards = new HashSet<>();
 		
@@ -36,6 +72,13 @@ public class Hand {
 		return new Hand(cards);
 	}
 	
+	/**
+	 * Creates a new {@code Hand} from the supplied {@link Card}s
+	 * @param cards all {@code Card}s to be used in this hand
+	 * @return The newly created {@code Hand} object
+	 * @throws IllegalHandException if the number of supplied {@code Card}s is greater than
+	 * {@code MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
 	public static Hand fromCards(Card... cards) {
 		Set<Card> cardSet = new HashSet<>();
 		
@@ -46,6 +89,19 @@ public class Hand {
 		return new Hand(cardSet);
 	}
 	
+	/**
+	 * <p>Creates a new {@code Hand} from all the supplied {@link Card}s</p>
+	 * <p>
+	 * Can be used as a convenience method in case the client code holds boards cards and
+	 * hole cards in different data structures. All supplied {@code Card}s will be merged into
+	 * one {@link Set} from which the {@code Hand} will be created.
+	 * </p>
+	 * @param baseCards {@code Cards} used as the community cards
+	 * @param holeCards {@code Cards} used as the hole cards of a player
+	 * @return The newly created {@code Hand} object
+	 * @throws IllegalHandException if the total number of supplied {@code Card}s is greater than
+	 * {@code MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
 	public static Hand fromCards(Set<Card> baseCards, Card... holeCards) {
 		Set<Card> cardSet = new HashSet<>();
 		cardSet.addAll(baseCards);
@@ -57,6 +113,34 @@ public class Hand {
 		return new Hand(cardSet);
 	}
 	
+	/**
+	 * <p>Creates a new {@code Hand} from all the supplied {@link Card}s</p>
+	 * <p>
+	 * Can be used as a convenience method in case the client code holds boards cards and
+	 * hole cards in different data structures. All supplied {@code Card}s will be merged into
+	 * one {@link Set} from which the {@code Hand} will be created.
+	 * </p>
+	 * @param baseCards {@code Cards} used as the community cards
+	 * @param holeCards {@code Cards} used as the hole cards of a player
+	 * @return The newly created {@code Hand} object
+	 * @throws IllegalHandException if the total number of supplied {@code Card}s is greater than
+	 * {@code MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
+	public static Hand fromCards(Set<Card> baseCards, Set<Card> holeCards) {
+		Set<Card> cardSet = new HashSet<>();
+		cardSet.addAll(baseCards);
+		cardSet.addAll(holeCards);
+		
+		return new Hand(cardSet);
+	}
+	
+	/**
+	 * Creates a new {@code Hand} with random {@link Card}s
+	 * @param numberOfCards number of random {@code Card}s to be generated for the {@code Hand}
+	 * @return The newly created {@code Hand}
+	 * @throws AllCardsDealtException if {@code numberOfCards} is greater than the total number of
+	 * cards in the deck
+	 */
 	public static Hand randomHand(int numberOfCards) {
 		Set<Card> cards = new HashSet<>();
 		
@@ -67,14 +151,32 @@ public class Hand {
 		return new Hand(cards);
 	}
 	
+	/**
+	 * All {@link Card}s in this {@code Hand}
+	 * @return A {@link Set} of all {@code Card}s in this {@code Hand}
+	 */
 	public Set<Card> getCards() {
 		return cards;
 	}
 
+	/**
+	 * Set the {@link Card}s of this {@code Hand}
+	 * @param cards a {@link Set} of {@code Card}s to be used in this {@code Hand}
+	 * @throws IllegalHandException if {@code cards.size() > MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
 	public void setCards(Set<Card> cards) {
+		if (!isValidCardSet(cards)) {
+			throw new IllegalHandException();
+		}
+		
 		this.cards = cards;
 	}
 	
+	/**
+	 * Add a {@link Card} to this {@code Hand}
+	 * @param card the {@code Card} to be added to the {@code Hand}
+	 * @throws IllegalHandException if {@code cards.size() > MAX_NUMBER_OF_CARDS_PER_HAND}
+	 */
 	public void addCard(Card card) {
 		if (cards.size() < MAX_NUMBER_OF_CARDS_PER_HAND && !cards.contains(card)) {
 			cards.add(card);
@@ -83,20 +185,50 @@ public class Hand {
 		}
 	}
 
+	/**
+	 * The ID of this {@code Hand}
+	 * @return ID of this {@code Hand}.
+	 * @see #setId(String)
+	 */
 	public String getId() {
 		return id;
 	}
 
+	/**
+	 * <p>Set the ID of this {@code Hand}</p>
+	 * <p>
+	 * The ID will be passed into the {@link HandResult} object when {@link #evaluate()} is
+	 * called to allow for hand tracking. If the client code holds a player's name associated
+	 * with this hand, it could be reasonable to use that as the {@code Hand}'s ID to be able
+	 * to later identify which player's {@code Hand} yielded which {@code HandResult}.
+	 * </p>
+	 * <p>
+	 * By default, a UUID is automatically generated upon creation of a {@code Hand}.
+	 * </p>
+	 * @param id the ID to be used for this {@code Hand}
+	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+	 * Whether the supplied {@link Set} contains at most {@code MAX_NUMBER_OF_CARDS_PER_HAND}
+	 * {@link Card}s
+	 * @param cards the {@code Set} to be investigated
+	 * @return {@code true}, if {@code cards.size() <= MAX_NUMBER_OF_CARDS_PER_HAND}, {@code false}
+	 * otherwise
+	 */
 	private boolean isValidCardSet(Set<Card> cards) {
 		return cards.size() <= MAX_NUMBER_OF_CARDS_PER_HAND;
 	}
 	
-	/*
-	 * Hand detection
+	/**
+	 * Evaluate the {@link Card}s of this {@code Hand} and report the result as a {@link HandResult}
+	 * @return The {@code HandResult} encapsulating the type of hand found and a detailed breakdown.
+	 * The {@code HandResult} will also be passed this {@code Hand}'s ID to allow for identifying
+	 * which {@code Hand} has generated the {@code HandResult}.
+	 * @throws InvalidHandEvaluationException if none of the {@link HandType}s could be identified
+	 * within this {@code Hand}'s cards
 	 */
 	public HandResult evaluate() {
 		CardSequence longestSequence = EvaluationHelper.getLongestSequence(cards);

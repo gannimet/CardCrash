@@ -56,7 +56,7 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 		
 		if (getN() < n) {
 			// we don't have enough cards
-			throw new IllegalRequestException();
+			throw new IllegalNOfAKindAccessException();
 		}
 		
 		List<Card> sortedCards = new ArrayList<>();

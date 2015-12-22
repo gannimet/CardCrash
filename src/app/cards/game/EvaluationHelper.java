@@ -14,8 +14,25 @@ import app.cards.Rank;
 import app.cards.RankBeforeSuitComparator;
 import app.cards.Suit;
 
+/**
+ * {@code EvaluationHelper} offers static helper methods for common tasks in hand evaluation.
+ */
 class EvaluationHelper {
 
+	private EvaluationHelper() {}
+	
+	/**
+	 * The longest possible {@link CardSequence} within a {@link Set} of {@link Card}s
+	 * @param cards {@code Set} of {@code Card} objects to be investigated for the longest
+	 * possible {@code CardSequence}
+	 * @return <p>The longest possible {@code CardSequence} to be found within {@code cards}</p>
+	 * <p>
+	 * At each position in the returned sequence there can be multiple cards (each with the same
+	 * rank as one another). The reason is that there might be multiple possible {@link Straight}s
+	 * within the sequence, some of which might be Straight Flushes. The final evaluation with
+	 * regards to this is performed in {@link Straight#makeBestStraight(CardSequence)}.
+	 * </p>
+	 */
 	static CardSequence getLongestSequence(Set<Card> cards) {
 		Set<CardSequence> allSequences = new HashSet<>();
 		CardSequence currentSequence = new CardSequence();
@@ -91,7 +108,14 @@ class EvaluationHelper {
 		return longestSequence;
 	}
 	
-	public static Map<Rank, Set<Card>> groupCardsByRank(Set<Card> cards) {
+	/**
+	 * <p>Maps all {@link Card}s within {@code cards} to their {@link Rank}</p>
+	 * <p>This method can be used as the basis for {@link NOfAKind} detection.</p>
+	 * @param cards Cards to be grouped by their ranks into a {@link Map}
+	 * @return A {@code Map} object mapping {@code Rank} to a {@link Set} of all {@code Card}s
+	 * with this rank
+	 */
+	static Map<Rank, Set<Card>> groupCardsByRank(Set<Card> cards) {
 		Map<Rank, Set<Card>> groupedRanks = new HashMap<>();
 		
 		for (Rank rank : Rank.values()) {
@@ -106,7 +130,14 @@ class EvaluationHelper {
 		return groupedRanks;
 	}
 	
-	public static Map<Suit, Set<Card>> groupCardsBySuit(Set<Card> cards) {
+	/**
+	 * <p>Maps all {@link Card}s within {@code cards} to their {@link Suit}</p>
+	 * <p>This method can be used as the basis for {@link Flush} detection.</p>
+	 * @param cards Cards to be grouped by their suits into a {@link Map}
+	 * @return A {@code Map} object mapping {@code Suit} to a {@link Set} of all {@code Card}s
+	 * with this suit
+	 */
+	static Map<Suit, Set<Card>> groupCardsBySuit(Set<Card> cards) {
 		Map<Suit, Set<Card>> groupedSuits = new HashMap<>();
 		
 		for (Suit suit : Suit.values()) {
@@ -121,7 +152,13 @@ class EvaluationHelper {
 		return groupedSuits;
 	}
 	
-	public static List<NOfAKind> getNOfAKinds(Set<Card> cards) {
+	/**
+	 * Returns a sorted {@link List} of all {@link NOfAKind}s found within {@code cards}, from best to worst
+	 * @param cards {@code Card}s to be investigated for {@code NOfAKind}s
+	 * @return A sorted {@code List} (descending in value) of all {@code NOfAKind}s found in the supplied
+	 * {@link Set}
+	 */
+	static List<NOfAKind> getNOfAKinds(Set<Card> cards) {
 		Map<Rank, Set<Card>> groupedRanks = groupCardsByRank(cards);
 		List<NOfAKind> nOfAKinds = new ArrayList<>();
 		
@@ -137,6 +174,12 @@ class EvaluationHelper {
 		return nOfAKinds;
 	}
 	
+	/**
+	 * Whether all {@link Card}s inside the supplied {@link Collection} have the same {@link Suit}
+	 * @param cards {@code Card}s to be investigated
+	 * @return {@code true}, if all cards in the supplied {@code Collection} are of equal {@code Suit},
+	 * {@code false} otherwise
+	 */
 	static boolean areAllCardsOfTheSameSuit(Collection<Card> cards) {
 		Suit referenceSuit = null;
 		
@@ -152,7 +195,13 @@ class EvaluationHelper {
 		
 		return true;
 	}
-	
+
+	/**
+	 * Whether all {@link Card}s inside the supplied {@link Collection} have the same {@link Rank}
+	 * @param cards {@code Card}s to be investigated
+	 * @return {@code true}, if all cards in the supplied {@code Collection} are of equal {@code Rank},
+	 * {@code false} otherwise
+	 */
 	static boolean areAllCardsOfTheSameRank(Collection<Card> cards) {
 		Rank referenceRank = null;
 		
