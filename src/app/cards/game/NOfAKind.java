@@ -11,10 +11,23 @@ import app.cards.Card;
 import app.cards.Rank;
 import app.cards.RankBeforeSuitComparator;
 
+/**
+ * <p>Represents an assortment of {@link Card}s with equal {link Rank}.</p>
+ * <p>
+ * An {@code NOfAKind} is the basis for poker hands like {@link HandType#ONE_PAIR}, {@link HandType#TWO_PAIR},
+ * {@link HandType#THREE_OF_A_KIND}, {@link HandType#FULL_HOUSE} and {@link HandType#FOUR_OF_A_KIND}.
+ * </p>
+ */
 class NOfAKind implements Comparable<NOfAKind>, HandValue {
 
 	private Set<Card> cards = new HashSet<>();
 	
+	/**
+	 * Creates a new {@code NOfAKind} from the supplied {@link Set} of {@link Card}s
+	 * @param cards the {@code Card}s to be used in the {@code NOfAKind}
+	 * @throws IllegalNOfAKindException if not all of the supplied {@code Card}s are of the same {@link Rank} (and
+	 * therefore don't make a valid {@code NOfAKind})
+	 */
 	public NOfAKind(Set<Card> cards) {
 		if (!EvaluationHelper.areAllCardsOfTheSameRank(cards)) {
 			throw new IllegalNOfAKindException();
@@ -23,6 +36,12 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 		this.cards = cards;
 	}
 	
+	/**
+	 * Adds a {@link Card} to this {@code NOfAKind}
+	 * @param card the {@code Card} to be added
+	 * @throws IllegalCardException if the {@link Rank} of {@code card} does not match the other {@code Card}s'
+	 * {@code Rank}s
+	 */
 	public void addCard(Card card) {
 		if (!cards.isEmpty() && cards.iterator().next().getRank() == card.getRank()) {
 			cards.add(card);
@@ -31,6 +50,10 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 		}
 	}
 	
+	/**
+	 * The {@link Rank} of all {@link Card}s in this {@code NOfAKind}
+	 * @return The {@link Rank} of all {@link Card}s in this {@code NOfAKind}
+	 */
 	public Rank getRank() {
 		if (!cards.isEmpty()) {
 			return cards.iterator().next().getRank();
@@ -44,10 +67,22 @@ class NOfAKind implements Comparable<NOfAKind>, HandValue {
 		return cards;
 	}
 	
+	/**
+	 * The number of {@link Card}s in this {@code NOfAKind}
+	 * @return The number of {@link Card}s in this {@code NOfAKind}
+	 */
 	public int getN() {
 		return cards.size();
 	}
 	
+	/**
+	 * The {@code n} best {@link Card}s of this {@code NOfAKind} as a new {@code NOfAKind}
+	 * @param n the number of {@code Card}s to pack into a new {@code NOfAKind}
+	 * @return A newly created {@code NOfAKind} containing the {@code n} best {@code Card}s
+	 * (as determined by the {@link RankBeforeSuitComparator}) from the original {@link NOfAKind}
+	 * @throws IllegalNOfAKindAccessException if there are less than {@code n} {@code Card}s
+	 * in the original {@code NOfAKind}
+	 */
 	public NOfAKind getNBestCardsAsNewNOfAKind(int n) {
 		if (getN() == n) {
 			// this one is already the desired n of a kind

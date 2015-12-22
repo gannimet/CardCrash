@@ -15,13 +15,7 @@ public enum Rank {
 	private char shortName;
 	private int value;
 	
-	/**
-	 * Create a rank with name, shortcut and value.
-	 * @param name Full name of the rank (e. g. "King")
-	 * @param shortName one-character abbreviation (e. g. "K")
-	 * @param value numeric value to enable comparisons, the higher the better
-	 */
-	Rank(String name, char shortName, int value) {
+	private Rank(String name, char shortName, int value) {
 		this.name = name;
 		this.shortName = shortName;
 		this.value = value;
