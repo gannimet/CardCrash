@@ -2,6 +2,10 @@
 
 CardCrash is a poker evaluation library written in Java.
 
+## Dependencies
+
+Google Guava (https://github.com/google/guava) needs to be added to the class path.
+
 ## Creating cards
 
     Card c1 = Card.getCard(Suit.CLUBS, Rank.FIVE);
