@@ -1,6 +1,6 @@
 # CardCrash
 
-CardCrash is a poker evaluation library written in Java.
+CardCrash is a poker hand evaluation library written in Java.
 
 ## Dependencies
 
